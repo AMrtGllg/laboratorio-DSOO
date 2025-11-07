@@ -1,17 +1,17 @@
 import java.util.*;
 
 public class videojuego {
-    private static Random rnd = new Random();
-    private static Scanner sc = new Scanner(System.in);
+    private static final int TAM = 10;
+    private static final Random rnd = new Random();
+    private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        final int tamaño = 10;
-        soldado[][] tablero = new soldado[tamaño][tamaño];
+        soldado[][] tablero = new soldado[TAM][TAM];
         List<soldado> ejercito1 = new ArrayList<>();
         List<soldado> ejercito2 = new ArrayList<>();
 
-        int n1 = rnd.nextInt(10) + 1;
-        int n2 = rnd.nextInt(10) + 1;
+        int n1 = rnd.nextInt(10) + 1; 
+        int n2 = rnd.nextInt(10) + 1; 
 
         inicializarEjercito(ejercito1, tablero, 1, n1);
         inicializarEjercito(ejercito2, tablero, 2, n2);
@@ -20,8 +20,8 @@ public class videojuego {
 
         System.out.println("Soldado con más vida en Ejército 1: " + soldadoMayorVida(ejercito1));
         System.out.println("Soldado con más vida en Ejército 2: " + soldadoMayorVida(ejercito2));
-        System.out.printf("Promedio vida Ejército 1: %.2f\n", promedioVida(ejercito1));
-        System.out.printf("Promedio vida Ejército 2: %.2f\n", promedioVida(ejercito2));
+        System.out.printf("Promedio vida Ejército 1: %.2f%n", promedioVida(ejercito1));
+        System.out.printf("Promedio vida Ejército 2: %.2f%n", promedioVida(ejercito2));
 
         mostrarRanking("Burbuja", ejercito1, ejercito2, true);
         mostrarRanking("Selección", ejercito1, ejercito2, false);
@@ -34,10 +34,11 @@ public class videojuego {
 
         int turno = 1;
         while (!ejercito1.isEmpty() && !ejercito2.isEmpty()) {
-            System.out.println("Turno del Ejército " + turno);
-            moverSoldado(tablero, turno == 1 ? ejercito1 : ejercito2, turno == 1 ? ejercito2 : ejercito1, turno);
+            System.out.println("\nTurno del Ejército " + turno);
+            moverSoldado(tablero, turno == 1 ? ejercito1 : ejercito2,
+                                  turno == 1 ? ejercito2 : ejercito1, turno);
             mostrarTablero(tablero);
-            if (turno == 1) turno = 2; else turno = 1;
+            turno = (turno == 1) ? 2 : 1;
         }
 
         if (ejercito1.isEmpty()) System.out.println("¡Gana Ejército 2!");
@@ -45,36 +46,59 @@ public class videojuego {
     }
 
     private static void inicializarEjercito(List<soldado> ejercito, soldado[][] tablero, int idEjercito, int n) {
-        int tamaño = tablero.length;
         for (int i = 0; i < n; i++) {
             int fila, col;
             do {
-                fila = rnd.nextInt(tamaño);
-                col = rnd.nextInt(tamaño);
+                fila = rnd.nextInt(TAM);
+                col = rnd.nextInt(TAM);
             } while (tablero[fila][col] != null);
-            int vida = rnd.nextInt(5) + 1;
-            int ataque = rnd.nextInt(5) + 1;
-            int defensa = rnd.nextInt(5) + 1;
-            soldado s = new soldado("Soldado" + i + "X" + idEjercito, vida, ataque, defensa, 0, "defensiva", fila, col, idEjercito);
+
+            soldado s = crearSoldadoAleatorio(i, idEjercito, fila, col);
             ejercito.add(s);
             tablero[fila][col] = s;
         }
     }
 
+    private static soldado crearSoldadoAleatorio(int i, int idEjercito, int fila, int col) {
+        int tipo = rnd.nextInt(4);        
+        int at = rnd.nextInt(5) + 1;      
+        int df = rnd.nextInt(5) + 1;      
+        switch (tipo) {
+            case 0: { 
+                int vida = rnd.nextInt(2) + 3;
+                int longEsp = rnd.nextInt(3) + 1;
+                return new espadachin("Espadachin" + i + "X" + idEjercito, vida, at, df, 0, "defensiva", fila, col, idEjercito, longEsp);
+            }
+            case 1: {
+                int vida = rnd.nextInt(3) + 1;
+                int flechas = rnd.nextInt(5) + 1;
+                return new arquero("Arquero" + i + "X" + idEjercito, vida, at, df, 0, "defensiva", fila, col, idEjercito, flechas);
+            }
+            case 2: { 
+                int vida = rnd.nextInt(3) + 3;
+                return new caballero("Caballero" + i + "X" + idEjercito, vida, at, df, 0, "defensiva", fila, col, idEjercito);
+            }
+            default: { 
+                int vida = rnd.nextInt(2) + 1;
+                int longLan = rnd.nextInt(3) + 1;
+                return new lancero("Lancero" + i + "X" + idEjercito, vida, at, df, 0, "defensiva", fila, col, idEjercito, longLan);
+            }
+        }
+    }
+
     private static void mostrarTablero(soldado[][] tablero) {
         System.out.println("\nTABLERO:");
-        for (int i = 0; i < tablero.length; i++) {
-            for (int j = 0; j < tablero.length; j++) {
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
                 if (tablero[i][j] == null) System.out.print(" . ");
-                else if (tablero[i][j].getEjercito() == 1) System.out.print(" 1 ");
-                else System.out.print(" 2 ");
+                else System.out.print(tablero[i][j].getEjercito() == 1 ? " 1 " : " 2 ");
             }
             System.out.println();
         }
     }
 
     private static soldado soldadoMayorVida(List<soldado> ejercito) {
-        return Collections.max(ejercito, Comparator.comparingInt(s -> s.getVida()));
+        return Collections.max(ejercito, Comparator.comparingInt(soldado::getVida));
     }
 
     private static double promedioVida(List<soldado> ejercito) {
@@ -85,22 +109,14 @@ public class videojuego {
 
     private static void mostrarRanking(String metodo, List<soldado> ejercito1, List<soldado> ejercito2, boolean esBurbuja) {
         System.out.println("\nRanking por vida (" + metodo + "):");
-
-        List<soldado> ranking1 = new ArrayList<>(ejercito1);
-        List<soldado> ranking2 = new ArrayList<>(ejercito2);
-
-        if (esBurbuja) {
-            ordenarBurbuja(ranking1);
-            ordenarBurbuja(ranking2);
-        } else {
-            ordenarSeleccion(ranking1);
-            ordenarSeleccion(ranking2);
-        }
-
+        List<soldado> r1 = new ArrayList<>(ejercito1);
+        List<soldado> r2 = new ArrayList<>(ejercito2);
+        if (esBurbuja) { ordenarBurbuja(r1); ordenarBurbuja(r2); }
+        else { ordenarSeleccion(r1); ordenarSeleccion(r2); }
         System.out.println("Ejército 1:");
-        for (soldado s : ranking1) System.out.println(s);
+        for (soldado s : r1) System.out.println(s);
         System.out.println("Ejército 2:");
-        for (soldado s : ranking2) System.out.println(s);
+        for (soldado s : r2) System.out.println(s);
     }
 
     private static void ordenarBurbuja(List<soldado> lista) {
@@ -119,9 +135,7 @@ public class videojuego {
         for (int i = 0; i < n - 1; i++) {
             int maxIdx = i;
             for (int j = i + 1; j < n; j++) {
-                if (lista.get(j).getVida() > lista.get(maxIdx).getVida()) {
-                    maxIdx = j;
-                }
+                if (lista.get(j).getVida() > lista.get(maxIdx).getVida()) maxIdx = j;
             }
             Collections.swap(lista, i, maxIdx);
         }
@@ -135,49 +149,60 @@ public class videojuego {
 
     private static void moverSoldado(soldado[][] tablero, List<soldado> propio, List<soldado> enemigo, int idEjercito) {
         int filaOrigen, colOrigen, dir;
-        while(true) {
+        soldado s = null;
+        while (true) {
             System.out.print("Ingrese fila del soldado a mover: ");
             filaOrigen = sc.nextInt();
             System.out.print("Ingrese columna del soldado a mover: ");
             colOrigen = sc.nextInt();
-            if (filaOrigen < 0 || filaOrigen >= tablero.length || colOrigen < 0 || colOrigen >= tablero.length) {
-                System.out.println("Posición fuera del tablero, intente de nuevo.");
-                continue;
-            }
-            soldado s = tablero[filaOrigen][colOrigen];
-            if (s == null || s.getEjercito() != idEjercito) {
-                System.out.println("No hay soldado propio en esa posición, intente de nuevo.");
-                continue;
-            }
+            if (filaOrigen < 0 || filaOrigen >= TAM || colOrigen < 0 || colOrigen >= TAM) { System.out.println("Posición fuera del tablero, intente de nuevo."); continue; }
+            s = tablero[filaOrigen][colOrigen];
+            if (s == null || s.getEjercito() != idEjercito) { System.out.println("No hay soldado propio en esa posición, intente de nuevo."); continue; }
             break;
         }
-        int filaDestino = filaOrigen;
-        int colDestino = colOrigen;
-        while(true) {
+
+        System.out.print("¿Usar acción especial? (S/N): ");
+        String usar = sc.next().trim().toUpperCase();
+        if (usar.equals("S")) {
+            if (s instanceof espadachin) {
+                accionesEspeciales.muroEscudos((espadachin) s);
+            } else if (s instanceof arquero) {
+                accionesEspeciales.dispararFlecha((arquero) s);
+            } else if (s instanceof caballero) {
+                System.out.print("1) Montar  2) Desmontar  3) Envestir: ");
+                int op = sc.nextInt();
+                caballero c = (caballero) s;
+                if (op == 1) accionesEspeciales.montar(c);
+                else if (op == 2) accionesEspeciales.desmontar(c);
+                else if (op == 3) accionesEspeciales.envestir(c);
+            } else if (s instanceof lancero) {
+                accionesEspeciales.schiltrom((lancero) s);
+            }
+        }
+
+        int filaDestino = filaOrigen, colDestino = colOrigen;
+        while (true) {
             System.out.print("Ingrese dirección de movimiento (1=arriba, 2=abajo, 3=izquierda, 4=derecha): ");
             dir = sc.nextInt();
-            switch(dir) {
-                case 1: filaDestino--; break;
-                case 2: filaDestino++; break;
-                case 3: colDestino--; break;
-                case 4: colDestino++; break;
-                default: System.out.println("Dirección inválida, intente de nuevo."); continue;
+            switch (dir) {
+                case 1 -> filaDestino--;
+                case 2 -> filaDestino++;
+                case 3 -> colDestino--;
+                case 4 -> colDestino++;
+                default -> { System.out.println("Dirección inválida, intente de nuevo."); continue; }
             }
-            if (filaDestino < 0 || filaDestino >= tablero.length || colDestino < 0 || colDestino >= tablero.length) {
+            if (filaDestino < 0 || filaDestino >= TAM || colDestino < 0 || colDestino >= TAM) {
                 System.out.println("Movimiento fuera del tablero, intente de nuevo.");
-                filaDestino = filaOrigen;
-                colDestino = colOrigen;
-                continue;
+                filaDestino = filaOrigen; colDestino = colOrigen; continue;
             }
             if (tablero[filaDestino][colDestino] != null && tablero[filaDestino][colDestino].getEjercito() == idEjercito) {
                 System.out.println("Ya hay un soldado propio en la casilla destino, intente de nuevo.");
-                filaDestino = filaOrigen;
-                colDestino = colOrigen;
-                continue;
+                filaDestino = filaOrigen; colDestino = colOrigen; continue;
             }
             break;
         }
-        soldado mover = tablero[filaOrigen][colOrigen];
+
+        soldado mover = s;
         if (tablero[filaDestino][colDestino] == null) {
             tablero[filaDestino][colDestino] = mover;
             tablero[filaOrigen][colOrigen] = null;
@@ -188,11 +213,11 @@ public class videojuego {
             int vidaMover = mover.getVida();
             int vidaEnemigo = enemigoSoldado.getVida();
             double probMover = (double) vidaMover / (vidaMover + vidaEnemigo);
-            double probEnemigo = (double) vidaEnemigo / (vidaMover + vidaEnemigo);
+            double probEnemigo = 1.0 - probMover;
             double azar = rnd.nextDouble();
 
-            System.out.printf("Batalla: %s (vida %d) VS %s (vida %d)\n", mover.getNombre(), vidaMover, enemigoSoldado.getNombre(), vidaEnemigo);
-            System.out.printf("Probabilidades: %s %.2f%%, %s %.2f%%\n", mover.getNombre(), probMover*100, enemigoSoldado.getNombre(), probEnemigo*100);
+            System.out.printf("Batalla: %s (vida %d) VS %s (vida %d)%n", mover.getNombre(), vidaMover, enemigoSoldado.getNombre(), vidaEnemigo);
+            System.out.printf("Probabilidades: %s %.2f%%, %s %.2f%%%n", mover.getNombre(), probMover * 100, enemigoSoldado.getNombre(), probEnemigo * 100);
 
             if (azar <= probMover) {
                 mover.setVida(vidaMover + 1);
@@ -200,11 +225,11 @@ public class videojuego {
                 tablero[filaOrigen][colOrigen] = null;
                 mover.mover(filaDestino, colDestino);
                 enemigo.remove(enemigoSoldado);
-                System.out.printf("Gana %s porque su probabilidad era mayor.\n", mover.getNombre());
+                System.out.printf("Gana %s porque su probabilidad era mayor.%n", mover.getNombre());
             } else {
                 propio.remove(mover);
                 tablero[filaOrigen][colOrigen] = null;
-                System.out.printf("Gana %s porque su probabilidad era mayor.\n", enemigoSoldado.getNombre());
+                System.out.printf("Gana %s porque su probabilidad era mayor.%n", enemigoSoldado.getNombre());
             }
         }
     }

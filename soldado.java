@@ -1,15 +1,16 @@
 public class soldado {
-    private String nombre;
-    private int vida;
-    private int ataque;
-    private int defensa;
-    private int velocidad;
-    private String actitud;
-    private int fila;
-    private int columna;
-    private int ejercito;
+    protected String nombre;
+    protected int vida;
+    protected int ataque;
+    protected int defensa;
+    protected int velocidad;
+    protected String actitud;
+    protected int fila;
+    protected int columna;
+    protected int ejercito;
 
-    public soldado(String nombre, int vida, int ataque, int defensa, int velocidad, String actitud, int fila, int columna, int ejercito) {
+    public soldado(String nombre, int vida, int ataque, int defensa, int velocidad,
+                   String actitud, int fila, int columna, int ejercito) {
         this.nombre = nombre;
         this.vida = vida;
         this.ataque = ataque;
@@ -54,7 +55,8 @@ public class soldado {
 
     @Override
     public String toString() {
-        return nombre + " Vida:" + vida + " Ataque:" + ataque + " Defensa:" + defensa + " Velocidad:" + velocidad + " Actitud:" + actitud + " Posicion:(" + fila + "," + columna + ")";
+        return nombre + " Vida:" + vida + " Ataque:" + ataque + " Defensa:" + defensa +
+               " Velocidad:" + velocidad + " Actitud:" + actitud +
+               " Posicion:(" + fila + "," + columna + ")";
     }
 }
-
