@@ -1,16 +1,15 @@
 public class arquero extends soldado {
     private int numeroFlechas;
 
-    public arquero(String nombre, int vida, int ataque, int defensa, int velocidad, String actitud, int fila, int columna, int ejercito, int numeroFlechas) {
-        super(nombre, vida, ataque, defensa, velocidad, actitud, fila, columna, ejercito);
-        this.numeroFlechas = numeroFlechas;
+    public void setNumeroFlechas(int n){ this.numeroFlechas=n; }
+    public int getNumeroFlechas(){ return this.numeroFlechas; }
+
+    public void disparar(){
+        if(numeroFlechas> 0){ numeroFlechas=numeroFlechas-1; } else { System.out.println(getNombre()+" sin flechas"); }
     }
 
-    public int getNumeroFlechas() { return numeroFlechas; }
-    public void setNumeroFlechas(int numeroFlechas) { this.numeroFlechas = numeroFlechas; }
-
     @Override
-    public String toString() {
-        return "[Arquero] " + super.toString() + " Flechas:" + numeroFlechas;
+    public String detalleCompleto(){
+        return super.detalleCompleto()+" flechas="+numeroFlechas;
     }
 }

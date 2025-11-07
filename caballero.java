@@ -1,21 +1,22 @@
 public class caballero extends soldado {
-    private boolean montado;    
-    private String arma;         
+    private boolean montado;
+    private String arma;
 
-    public caballero(String nombre, int vida, int ataque, int defensa, int velocidad, String actitud, int fila, int columna, int ejercito) {
-        super(nombre, vida, ataque, defensa, velocidad, actitud, fila, columna, ejercito);
-        this.montado = true;
-        this.arma = "lanza";
+    public boolean isMontado(){ return montado; }
+    public void setMontado(boolean m){ montado=m; }
+    public String getArma(){ return arma; }
+    public void setArma(String a){ arma=a; }
+
+    public void montar(){ if(!montado){ montado=true; arma="lanza"; envestir(); } }
+    public void desmontar(){ if(montado){ montado=false; arma="espada"; } }
+
+    public void envestir(){
+        if(montado){ System.out.println( getNombre()+" ataca 3 veces"); }
+        else { System.out.println(getNombre()+" ataca 2 veces"); }
     }
 
-    public boolean isMontado() { return montado; }
-    public void setMontado(boolean montado) { this.montado = montado; }
-
-    public String getArma() { return arma; }
-    public void setArma(String arma) { this.arma = arma; }
-
     @Override
-    public String toString() {
-        return "[Caballero] " + super.toString() + " Montado:" + montado + " Arma:" + arma;
+    public String detalleCompleto(){
+        return super.detalleCompleto()+ " montado=" +montado+ " arma="+arma;
     }
 }

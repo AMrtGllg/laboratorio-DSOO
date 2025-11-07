@@ -10,7 +10,7 @@ public class accionesEspeciales {
             a.setNumeroFlechas(a.getNumeroFlechas() - 1);
             System.out.println(a.getNombre() + " dispara una flecha. Flechas restantes: " + a.getNumeroFlechas());
         } else {
-            System.out.println(a.getNombre() + " no tiene flechas.");
+            System.out.println(a.getNombre () + " no tiene flechas.");
         }
     }
 
